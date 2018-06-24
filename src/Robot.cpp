@@ -30,6 +30,10 @@ public:
 	DifferentialDrive drive {Left, Right};
 
 	XboxController pilot {0};
+
+	static const GenericHID::JoystickHand left = GenericHID::kLeftHand;
+	static const GenericHID::JoystickHand right = GenericHID::kRightHand;
+
 	void RobotInit() {
 
 	}
@@ -43,9 +47,9 @@ public:
 	}
 
 	void TeleopInit() {
-		double speed = pilot.GetY(GenericHID::kLeftHand);
+		double speed = pilot.GetY(left);
 		drive.CurvatureDrive(speed,
-				pilot.GetX(GenericHID::kRightHand),
+				pilot.GetX(right),
 				fabs(speed) < 0.05);
 	}
 
