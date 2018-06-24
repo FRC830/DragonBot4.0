@@ -31,8 +31,8 @@ public:
 
 	XboxController pilot {0};
 
-	static const GenericHID::JoystickHand left = GenericHID::kLeftHand;
-	static const GenericHID::JoystickHand right = GenericHID::kRightHand;
+	static const GenericHID::JoystickHand LEFT = GenericHID::kLeftHand;
+	static const GenericHID::JoystickHand RIGHT = GenericHID::kRightHand;
 
 	void RobotInit() {
 
@@ -47,10 +47,8 @@ public:
 	}
 
 	void TeleopInit() {
-		double speed = pilot.GetY(left);
-		drive.CurvatureDrive(speed,
-				pilot.GetX(right),
-				fabs(speed) < 0.05);
+		double speed = pilot.GetY(LEFT);
+		drive.CurvatureDrive(speed,pilot.GetX(RIGHT),fabs(speed) < 0.05);
 	}
 
 	void TeleopPeriodic() {}
