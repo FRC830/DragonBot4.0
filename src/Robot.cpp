@@ -45,8 +45,13 @@ public:
 
 	XboxController pilot {0};
 
+
 	std::map<std::string, DigitalOutput*> sound_outputs;
 	std::map<int /*button ID*/, SendableChooser<DigitalOutput*>> sound_choosers;
+
+	static const GenericHID::JoystickHand LEFT = GenericHID::kLeftHand;
+	static const GenericHID::JoystickHand RIGHT = GenericHID::kRightHand;
+
 
 	void RobotInit() {
 		for (auto kv : sounds) {
@@ -71,10 +76,8 @@ public:
 	}
 
 	void TeleopInit() {
-		double speed = pilot.GetY(GenericHID::kLeftHand);
-		drive.CurvatureDrive(speed,
-				pilot.GetX(GenericHID::kRightHand),
-				fabs(speed) < 0.05);
+		double speed = pilot.GetY(LEFT);
+		drive.CurvatureDrive(speed,pilot.GetX(RIGHT),fabs(speed) < 0.05);
 	}
 
 	void TeleopPeriodic() {}
