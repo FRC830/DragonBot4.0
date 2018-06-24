@@ -8,12 +8,26 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <map>
 
 #include <IterativeRobot.h>
 #include <LiveWindow/LiveWindow.h>
 #include <SmartDashboard/SendableChooser.h>
 #include <SmartDashboard/SmartDashboard.h>
 #include "Lib830.h"
+
+using namespace Lib830;
+
+std::map<int, std::string> sounds {
+	{1, "engine"},
+	{2, "roar"},
+	{3, "growl"},
+	{4, "sheep"},
+	{5, "fart"},
+	{6, "laser"},
+	{7, "elevator"},
+	{8, "cat"},
+};
 
 class Robot : public frc::IterativeRobot {
 public:
@@ -30,8 +44,22 @@ public:
 	DifferentialDrive drive {Left, Right};
 
 	XboxController pilot {0};
-	void RobotInit() {
 
+	std::map<std::string, DigitalOutput*> sound_outputs;
+	std::map<int /*button ID*/, SendableChooser<DigitalOutput*>> sound_choosers;
+
+	void RobotInit() {
+		for (auto kv : sounds) {
+			sound_outputs[kv.second] = new DigitalOutput(kv.first);
+
+			for (int button : {GamepadF310::BUTTON_A, GamepadF310::BUTTON_B}) {
+				sound_choosers[button].AddObject(kv.second, sound_outputs[kv.second]);
+			}
+		}
+
+
+		SmartDashboard::PutData("sound A", &sound_choosers[GamepadF310::BUTTON_A]);
+		SmartDashboard::PutData("sound B", &sound_choosers[GamepadF310::BUTTON_B]);
 	}
 
 	void AutonomousInit() override {
