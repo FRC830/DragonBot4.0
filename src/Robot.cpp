@@ -19,10 +19,15 @@ class Robot : public frc::IterativeRobot {
 public:
 	static const int PWM_R1 = 0, PWM_R2 = 1,
 					 PWM_L1 = 2, PWM_L2 = 3;
-	DifferentialDrive drive {
-		SpeedControllerGroup {VictorSP {PWM_L1}, VictorSP {PWM_L2}},
-		SpeedControllerGroup {VictorSP {PWM_R1}, VictorSP {PWM_R2}}
-	};
+	VictorSP L1{PWM_L1};
+	VictorSP L2{PWM_L2};
+	VictorSP R1{PWM_R1};
+	VictorSP R2{PWM_R2};
+
+	SpeedControllerGroup Left{L1,L2};
+	SpeedControllerGroup Right{R1, R2};
+
+	DifferentialDrive drive {Left, Right};
 
 	XboxController pilot {0};
 	void RobotInit() {
