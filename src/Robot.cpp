@@ -38,10 +38,10 @@ public:
 	}
 
 	void TeleopInit() {
-		if (Numeric::abs(pilot.GetY(GenericHID::kLeftHand)) < )
-		drive.CurvatureDrive(pilot.GetY(GenericHID::kLeftHand),
+		double speed = pilot.GetY(GenericHID::kLeftHand);
+		drive.CurvatureDrive(speed,
 				pilot.GetX(GenericHID::kRightHand),
-				false);
+				fabs(speed) < 0.05);
 	}
 
 	void TeleopPeriodic() {}
