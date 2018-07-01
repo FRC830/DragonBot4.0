@@ -31,7 +31,7 @@ std::map<int, std::string> sounds {
 
 class Robot : public frc::IterativeRobot {
 public:
-	static const int PWM_R1 = 0, PWM_R2 = 1, PWM_R3 = 2,
+	static const int PWM_R1 = 6, PWM_R2 = 7, PWM_R3 = 8,
 					 PWM_L1 = 3, PWM_L2 = 4, PWM_L3 = 5;
 	VictorSP L1{PWM_L1};
 	VictorSP L2{PWM_L2};
