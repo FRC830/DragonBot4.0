@@ -33,12 +33,12 @@ class Robot : public frc::IterativeRobot {
 public:
 	static const int PWM_R1 = 6, PWM_R2 = 7, PWM_R3 = 8,
 					 PWM_L1 = 3, PWM_L2 = 4, PWM_L3 = 5;
-	VictorSP L1{PWM_L1};
-	VictorSP L2{PWM_L2};
-	VictorSP L3{PWM_L3};
-	VictorSP R1{PWM_R1};
-	VictorSP R2{PWM_R2};
-	VictorSP R3{PWM_R3};
+	Talon L1{PWM_L1};
+	Talon L2{PWM_L2};
+	Talon L3{PWM_L3};
+	Talon R1{PWM_R1};
+	Talon R2{PWM_R2};
+	Talon R3{PWM_R3};
 
 	const int Bubble_Machine_Relay = 0; //placeholder value
 
