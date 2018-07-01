@@ -19,27 +19,33 @@
 using namespace Lib830;
 
 std::map<int, std::string> sounds {
-	{1, "engine"},
+//	{1, "engine"},
 	{2, "roar"},
 	{3, "growl"},
 	{4, "sheep"},
 	{5, "fart"},
-	{6, "laser"},
-	{7, "elevator"},
-	{8, "cat"},
+//	{6, "laser"},
+//	{7, "elevator"},
+//	{8, "cat"},
 };
 
 class Robot : public frc::IterativeRobot {
 public:
-	static const int PWM_R1 = 0, PWM_R2 = 1,
-					 PWM_L1 = 2, PWM_L2 = 3;
+	static const int PWM_R1 = 0, PWM_R2 = 1, PWM_R3 = 2,
+					 PWM_L1 = 3, PWM_L2 = 4, PWM_L3 = 5;
 	VictorSP L1{PWM_L1};
 	VictorSP L2{PWM_L2};
+	VictorSP L3{PWM_L3};
 	VictorSP R1{PWM_R1};
 	VictorSP R2{PWM_R2};
+	VictorSP R3{PWM_R3};
 
-	SpeedControllerGroup Left{L1,L2};
-	SpeedControllerGroup Right{R1, R2};
+	const int Bubble_Machine_Relay = 0; //placeholder value
+
+	Relay bubbleBoi {Bubble_Machine_Relay};
+
+	SpeedControllerGroup Left{L1,L2,L3};
+	SpeedControllerGroup Right{R1,R2,R3};
 
 	DifferentialDrive drive {Left, Right};
 
@@ -49,11 +55,12 @@ public:
 	std::map<std::string, DigitalOutput*> sound_outputs;
 	std::map<int /*button ID*/, SendableChooser<DigitalOutput*>> sound_choosers;
 
+
 	static const GenericHID::JoystickHand LEFT = GenericHID::kLeftHand;
 	static const GenericHID::JoystickHand RIGHT = GenericHID::kRightHand;
 
-
 	void RobotInit() {
+
 		for (auto kv : sounds) {
 			sound_outputs[kv.second] = new DigitalOutput(kv.first);
 
@@ -63,8 +70,16 @@ public:
 		}
 
 
+
 		SmartDashboard::PutData("sound A", &sound_choosers[GamepadF310::BUTTON_A]);
 		SmartDashboard::PutData("sound B", &sound_choosers[GamepadF310::BUTTON_B]);
+	}
+
+	void setSound(DigitalOutput *out) {
+		for (auto kv : sound_outputs) {
+			// 1 = off
+			kv.second -> Set(kv.second != out);
+		}
 	}
 
 	void AutonomousInit() override {
@@ -76,11 +91,29 @@ public:
 	}
 
 	void TeleopInit() {
-		double speed = pilot.GetY(LEFT);
-		drive.CurvatureDrive(speed,pilot.GetX(RIGHT),fabs(speed) < 0.05);
+
 	}
 
-	void TeleopPeriodic() {}
+	void TeleopPeriodic() {
+
+		if (pilot.GetBButton()){
+			bubbleBoi.Set(Relay::kOn);
+		}
+		else{
+			bubbleBoi.Set(Relay::kOff);
+		}
+
+		double speed = pilot.GetY(LEFT);
+		drive.CurvatureDrive(speed,pilot.GetX(RIGHT),fabs(speed) < 0.05);
+
+		setSound(0);
+
+		for (auto &kv : sound_choosers) {
+			if (pilot.GetRawButton(kv.first)) {
+				setSound(kv.second.GetSelected());
+			}
+		}
+	}
 
 	void TestPeriodic() {}
 
