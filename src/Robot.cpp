@@ -42,7 +42,7 @@ public:
 
 	const int Bubble_Machine_Relay = 0; //placeholder value
 
-	Relay bubbleBoi {Bubble_Machine_Relay};
+	Relay bubbleBoi {Bubble_Machine_Relay, Relay::kForwardOnly};
 
 	SpeedControllerGroup Left{L1,L2,L3};
 	SpeedControllerGroup Right{R1,R2,R3};
@@ -97,7 +97,7 @@ public:
 	void TeleopPeriodic() {
 
 		if (pilot.GetBButton()){
-			bubbleBoi.Set(Relay::kOn);
+			bubbleBoi.Set(Relay::kForward);
 		}
 		else{
 			bubbleBoi.Set(Relay::kOff);
