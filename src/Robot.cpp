@@ -59,20 +59,20 @@ public:
 	static const GenericHID::JoystickHand LEFT = GenericHID::kLeftHand;
 	static const GenericHID::JoystickHand RIGHT = GenericHID::kRightHand;
 
-	void RobotInit() {
+	void RobotInit() override {
 
 		for (auto kv : sounds) {
 			sound_outputs[kv.second] = new DigitalOutput(kv.first);
 
-			for (int button : {GamepadF310::BUTTON_A, GamepadF310::BUTTON_B}) {
+			for (int button : {GamepadF310::BUTTON_X, GamepadF310::BUTTON_Y}) {
 				sound_choosers[button].AddObject(kv.second, sound_outputs[kv.second]);
 			}
 		}
 
 
 
-		SmartDashboard::PutData("sound A", &sound_choosers[GamepadF310::BUTTON_A]);
-		SmartDashboard::PutData("sound B", &sound_choosers[GamepadF310::BUTTON_B]);
+		SmartDashboard::PutData("sound X", &sound_choosers[GamepadF310::BUTTON_X]);
+		SmartDashboard::PutData("sound Y", &sound_choosers[GamepadF310::BUTTON_Y]);
 	}
 
 	void setSound(DigitalOutput *out) {
