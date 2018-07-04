@@ -73,6 +73,8 @@ public:
 
 		SmartDashboard::PutData("sound X", &sound_choosers[GamepadF310::BUTTON_X]);
 		SmartDashboard::PutData("sound Y", &sound_choosers[GamepadF310::BUTTON_Y]);
+
+		setSound(0);
 	}
 
 	void setSound(DigitalOutput *out) {
@@ -103,8 +105,8 @@ public:
 			bubbleBoi.Set(Relay::kOff);
 		}
 
-		double speed = pilot.GetY(LEFT);
-		drive.CurvatureDrive(speed,pilot.GetX(RIGHT),fabs(speed) < 0.05);
+		double speed = pilot.GetY(LEFT) * 0.5;
+		drive.CurvatureDrive(speed,pilot.GetX(RIGHT) * 0.5, fabs(speed) < 0.05);
 
 		setSound(0);
 
