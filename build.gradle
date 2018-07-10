@@ -4,7 +4,7 @@ plugins {
     id "jaci.openrio.gradle.GradleRIO" version "2018.01.22"
 }
 
-def TEAM = 5333
+def TEAM = 830
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
@@ -32,11 +32,11 @@ model {
             sources.cpp {
                 // This is where our source files are located (src/cpp for C++ files, src/include for headers)
                 source {
-                    srcDirs = ['src/cpp']
+                    srcDirs = ['src', 'Lib830']
                     include '**/*.cpp'
                 }
                 exportedHeaders{
-                    srcDirs = ['src/cpp', 'src/include']
+                    srcDirs = ['src', 'Lib830']
                     include '**/*.hpp', '**/*.h'
                 }
 
