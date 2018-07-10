@@ -36,3 +36,7 @@ build.xml
 build.properties
 .settings
 .project
+
+# Gradle
+.gradle/
+build/
