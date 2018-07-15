@@ -106,9 +106,9 @@ public:
 			bubbleBoi.Set(Relay::kOff);
 		}
 
-		double speed = accel(prev_speed, pilot.GetY(LEFT) * 0.5, 20);
+		double speed = accel(prev_speed, -pilot.GetY(LEFT) * 0.5, 20);
 		prev_speed = speed;
-		
+
 		drive.CurvatureDrive(speed,pilot.GetX(RIGHT) * 0.5, fabs(speed) < 0.05);
 
 		setSound(0);
