@@ -29,10 +29,42 @@ std::map<int, std::string> sounds {
 //	{8, "cat"},
 };
 
+class PIDSpeedControllerGroup : public SpeedControllerGroup {
+private:
+	PIDController pid;
+	Encoder &encoder;
+public:
+	template<typename... Args>
+    PIDSpeedControllerGroup(Encoder &encoder, Args&&... args) 
+       :SpeedControllerGroup(std::forward<Args>(args)...),
+	    pid(0.05, 0, 0, encoder, *this),
+		encoder(encoder)
+	{
+		encoder.SetPIDSourceType(PIDSourceType::kRate);
+		pid.SetPIDSourceType(PIDSourceType::kRate);
+		pid.SetInputRange(-100, 100);
+		pid.SetOutputRange(-0.5,0.5);
+		pid.Enable();
+	}
+
+	void Set(double value) override {
+		pid.SetSetpoint(value);
+	}
+	void PIDWrite(double value) override {
+		SpeedControllerGroup::Set(value);
+	}
+};
+
 class Robot : public frc::IterativeRobot {
 public:
 	static const int PWM_R1 = 6, PWM_R2 = 7, PWM_R3 = 8,
 					 PWM_L1 = 3, PWM_L2 = 4, PWM_L3 = 5;
+
+	static const int ENCODER_RIGHT_1 = 0;
+	static const int ENCODER_RIGHT_2 = 1;
+	static const int ENCODER_LEFT_1 = 2;
+	static const int ENCODER_LEFT_2 = 3;
+
 	Talon L1{PWM_L1};
 	Talon L2{PWM_L2};
 	Talon L3{PWM_L3};
@@ -44,8 +76,10 @@ public:
 
 	Relay bubbleBoi {Bubble_Machine_Relay, Relay::kForwardOnly};
 
-	SpeedControllerGroup Left{L1,L2,L3};
-	SpeedControllerGroup Right{R1,R2,R3};
+	Encoder left_encoder{ENCODER_LEFT_1, ENCODER_LEFT_2};
+	Encoder right_encoder{ENCODER_RIGHT_1, ENCODER_RIGHT_2};
+	PIDSpeedControllerGroup Left{left_encoder, L1, L2, L3};
+	PIDSpeedControllerGroup Right{right_encoder, R1, R2, R3};
 
 	DifferentialDrive drive {Left, Right};
 
