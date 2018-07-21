@@ -143,7 +143,7 @@ public:
 		double speed = accel(prev_speed, -pilot.GetY(LEFT) * 0.5, 20);
 		prev_speed = speed;
 
-		drive.CurvatureDrive(speed,pilot.GetX(RIGHT) * 0.5, fabs(speed) < 0.05);
+		drive.CurvatureDrive(speed,pilot.GetX(RIGHT) * 0.5, std::abs(speed) < 0.05);
 
 		setSound(0);
 
