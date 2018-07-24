@@ -2,6 +2,7 @@ plugins {
     id "cpp"
     id "visual-studio"
     id "jaci.openrio.gradle.GradleRIO" version "2018.01.22"
+    id 'edu.wpi.first.GradleVsCode' version '0.3.0'
 }
 
 def TEAM = 830

@@ -19,8 +19,9 @@
                 "C:\\Users\\RatPack\\.gradle\\gradlerio\\toolchains\\lib\\gcc\\arm-frc-linux-gnueabi\\5.5.0\\include-fixed",
                 "C:\\Users\\RatPack\\.gradle\\gradlerio\\toolchains\\arm-frc-linux-gnueabi\\include",
                 "C:\\Users\\RatPack\\workspace\\DragonBot4.0\\frc\\usr\\include",
-                "C:\\Users\\RatPack\\.gradle\\gradlerio\\toolchains"
-                            ],
+                "C:\\Users\\RatPack\\.gradle\\gradlerio\\toolchains",
+                "C:/Users/RatPack/.gradle/gradlerio/toolchains/arm-frc-linux-gnueabi/include/c++/5.5.0"
+            ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
