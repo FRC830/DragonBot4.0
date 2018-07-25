@@ -58,12 +58,15 @@ public:
 class Robot : public frc::IterativeRobot {
 public:
 	static const int PWM_R1 = 6, PWM_R2 = 7, PWM_R3 = 8,
-					 PWM_L1 = 3, PWM_L2 = 4, PWM_L3 = 5;
+					 PWM_L1 = 3, PWM_L2 = 4, PWM_L3 = 5,
+					 PWM_WING_FLAP = 9;
 
 	static const int ENCODER_RIGHT_1 = 0;
 	static const int ENCODER_RIGHT_2 = 1;
 	static const int ENCODER_LEFT_1 = 2;
 	static const int ENCODER_LEFT_2 = 3;
+
+	static const int PCM_GEAR_SHIFT = 0, PCM_WING_OPEN = 1;
 
 	Talon L1{PWM_L1};
 	Talon L2{PWM_L2};
@@ -72,9 +75,14 @@ public:
 	Talon R2{PWM_R2};
 	Talon R3{PWM_R3};
 
-	const int Bubble_Machine_Relay = 0; //placeholder value
+	Solenoid wingOpen{PCM_WING_OPEN};
+	Solenoid gearShift{PCM_GEAR_SHIFT};
 
-	Relay bubbleBoi {Bubble_Machine_Relay, Relay::kForwardOnly};
+	Toggle wingState{false};
+
+	const int BUBBLE_MACHINE_RELAY = 0; //placeholder value
+
+	Relay bubbleBoi {BUBBLE_MACHINE_RELAY, Relay::kForwardOnly};
 
 	Encoder left_encoder{ENCODER_LEFT_1, ENCODER_LEFT_2};
 	Encoder right_encoder{ENCODER_RIGHT_1, ENCODER_RIGHT_2};
@@ -109,6 +117,8 @@ public:
 		SmartDashboard::PutData("sound Y", &sound_choosers[GamepadF310::BUTTON_Y]);
 
 		setSound(0);
+		gearShift.Set(false);
+		wingOpen.Set(false);
 	}
 
 	void setSound(DigitalOutput *out) {
@@ -119,7 +129,7 @@ public:
 	}
 
 	void AutonomousInit() override {
-
+		
 	}
 
 	void AutonomousPeriodic() {
@@ -127,7 +137,7 @@ public:
 	}
 
 	void TeleopInit() {
-
+		
 	}
 
 	double prev_speed = 0;
@@ -152,6 +162,14 @@ public:
 				setSound(kv.second.GetSelected());
 			}
 		}
+
+		int POV = pilot.GetPOV();
+		if (POV <= 45 || POV >= 315){
+			gearShift.Set(true);
+		} else if (POV <= 225 && POV >= 135){
+			gearShift.Set(false);			
+		}
+
 	}
 
 	void TestPeriodic() {}
