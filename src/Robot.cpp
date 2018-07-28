@@ -68,7 +68,7 @@ public:
 	static const int ENCODER_LEFT_1 = 2;
 	static const int ENCODER_LEFT_2 = 3;
 
-	static const int PCM_GEAR_SHIFT = 0, PCM_WING_OPEN = 1;
+	static const int PCM_GEAR_SHIFT = 1, PCM_WING_OPEN = 0;
 
 	Talon L1{PWM_L1};
 	Talon L2{PWM_L2};
@@ -119,8 +119,8 @@ public:
 
 
 
-		SmartDashboard::PutData("sound X", &sound_choosers[GamepadF310::BUTTON_X]);
-		SmartDashboard::PutData("sound Y", &sound_choosers[GamepadF310::BUTTON_Y]);
+		SmartDashboard::PutData("Sound X", &sound_choosers[GamepadF310::BUTTON_X]);
+		SmartDashboard::PutData("Sound Y", &sound_choosers[GamepadF310::BUTTON_Y]);
 
 		setSound(0);
 		gearShift.Set(false);
@@ -157,7 +157,7 @@ public:
 			bubbleBoi.Set(Relay::kOff);
 		}
 
-		double speed = accel(prev_speed, -pilot.GetY(LEFT) * 0.5, 20);
+		double speed = accel(prev_speed, -pilot.GetY(LEFT) * 0.5, 50);
 		prev_speed = speed;
 
 		drive.CurvatureDrive(-speed,pilot.GetX(RIGHT) * -0.5, std::abs(speed) < 0.05);
@@ -180,7 +180,9 @@ public:
 		gearShift.Set(gear);
 
 		wingOpen.Set(wingState.toggle(pilot.GetAButton()));
-		wingFlap.Set(deadzone(pilot.GetTriggerAxis(RIGHT)));
+		wingFlap.Set(deadzone(pilot.GetTriggerAxis(RIGHT)) * 0.2);
+
+		SmartDashboard::PutBoolean("Wings Extended: ", wingState);
 	}
 
 	void TestPeriodic() {}
