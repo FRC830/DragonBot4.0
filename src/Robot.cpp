@@ -29,6 +29,8 @@ std::map<int, std::string> sounds {
 //	{8, "cat"},
 };
 
+enum GearState {low = false, high = true};
+
 class PIDSpeedControllerGroup : public SpeedControllerGroup {
 private:
 	PIDController pid;
@@ -75,6 +77,8 @@ public:
 	Talon R2{PWM_R2};
 	Talon R3{PWM_R3};
 
+	Victor wingFlap{PWM_WING_FLAP};
+
 	Solenoid wingOpen{PCM_WING_OPEN};
 	Solenoid gearShift{PCM_GEAR_SHIFT};
 
@@ -86,8 +90,10 @@ public:
 
 	Encoder left_encoder{ENCODER_LEFT_1, ENCODER_LEFT_2};
 	Encoder right_encoder{ENCODER_RIGHT_1, ENCODER_RIGHT_2};
-	PIDSpeedControllerGroup Left{left_encoder, L1, L2, L3};
-	PIDSpeedControllerGroup Right{right_encoder, R1, R2, R3};
+	// PIDSpeedControllerGroup Left{left_encoder, L1, L2, L3};
+	// PIDSpeedControllerGroup Right{right_encoder, R1, R2, R3};
+	SpeedControllerGroup Left{L1, L2, L3};
+	SpeedControllerGroup Right{R1, R2, R3};
 
 	DifferentialDrive drive {Left, Right};
 
@@ -141,6 +147,7 @@ public:
 	}
 
 	double prev_speed = 0;
+	GearState gear = low; 
 	void TeleopPeriodic() {
 
 		if (pilot.GetBButton()){
@@ -153,7 +160,7 @@ public:
 		double speed = accel(prev_speed, -pilot.GetY(LEFT) * 0.5, 20);
 		prev_speed = speed;
 
-		drive.CurvatureDrive(speed,pilot.GetX(RIGHT) * 0.5, std::abs(speed) < 0.05);
+		drive.CurvatureDrive(-speed,pilot.GetX(RIGHT) * -0.5, std::abs(speed) < 0.05);
 
 		setSound(0);
 
@@ -164,18 +171,28 @@ public:
 		}
 
 		int POV = pilot.GetPOV();
-		if (POV <= 45 || POV >= 315){
-			gearShift.Set(true);
-		} else if (POV <= 225 && POV >= 135){
-			gearShift.Set(false);			
+		if ((POV <= 45 && POV >= 0) || POV >= 315){
+			gear = high;
 		}
+		if (POV <= 225 && POV >= 135){
+			gear = low;			
+		}
+		gearShift.Set(gear);
 
+		wingOpen.Set(wingState.toggle(pilot.GetAButton()));
+		wingFlap.Set(deadzone(pilot.GetTriggerAxis(RIGHT)));
 	}
 
 	void TestPeriodic() {}
 
 private:
 	frc::LiveWindow& m_lw = *LiveWindow::GetInstance();
+	float deadzone(float a) {
+		if (fabs(a) < 0.05){
+			return 0;
+		}
+		return a;
+	}
 };
 
 START_ROBOT_CLASS(Robot)
