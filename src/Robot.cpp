@@ -20,10 +20,10 @@ using namespace Lib830;
 
 std::map<int, std::string> sounds {
 //	{1, "engine"},
-	{2, "roar"},
-	{3, "growl"},
-	{4, "sheep"},
-	{5, "fart"},
+	{4, "roar"},
+	{5, "growl"},
+	{6, "sheep"},
+	{7, "fart"},
 //	{6, "laser"},
 //	{7, "elevator"},
 //	{8, "cat"},
@@ -149,8 +149,17 @@ public:
 	double prev_speed = 0;
 	GearState gear = low; 
 	void TeleopPeriodic() {
+		double velocity = pilot.GetY(LEFT);
+		double turn = pilot.GetX(LEFT);
+		bool bubbles = pilot.GetBButton();
+		bool buttonA = pilot.GetAButton()
+		int buttonX = GamepadF310::BUTTON_X;
+		int buttonY = GamepadF310::BUTTON_Y;
+		int triggerright = pilot.GetTriggerAxis(RIGHT);
 
-		if (pilot.GetBButton()){
+	
+
+		if (bubbles{
 			bubbleBoi.Set(Relay::kForward);
 		}
 		else{
@@ -159,8 +168,8 @@ public:
 
 		double speed = accel(prev_speed, -pilot.GetY(LEFT) * 0.5, 50);
 		prev_speed = speed;
-
-		drive.CurvatureDrive(-speed,pilot.GetX(RIGHT) * -0.5, std::abs(speed) < 0.05);
+		velocity = speed
+		drive.CurvatureDrive(-speed,turn * -0.5, std::abs(speed) < 0.05);
 
 		setSound(0);
 
@@ -179,8 +188,8 @@ public:
 		}
 		gearShift.Set(gear);
 
-		wingOpen.Set(wingState.toggle(pilot.GetAButton()));
-		wingFlap.Set(deadzone(pilot.GetTriggerAxis(RIGHT)) * 0.2);
+		wingOpen.Set(wingState.toggle(buttonA()));
+		wingFlap.Set(deadzone(triggerright * 0.2);
 
 		SmartDashboard::PutBoolean("Wings Extended: ", wingState);
 	}
