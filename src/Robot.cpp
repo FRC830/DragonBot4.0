@@ -149,26 +149,30 @@ public:
 	double prev_speed = 0;
 	GearState gear = low; 
 	void TeleopPeriodic() {
-		double velocity = pilot.GetY(LEFT);
+		
+		//how fast the robot moves forwards and backwards
+		double speed_setpoint = pilot.GetY(LEFT);
+		
+		//controlls how fast the robot will spin, or if its moving the turn radius it turns through
 		double turn = pilot.GetX(LEFT);
+		
+		//true is blowing bubbles when the button is pressed, false is not when the button is up
 		bool bubbles = pilot.GetBButton();
-		bool buttonA = pilot.GetAButton()
-		int buttonX = GamepadF310::BUTTON_X;
-		int buttonY = GamepadF310::BUTTON_Y;
-		int triggerright = pilot.GetTriggerAxis(RIGHT);
+		
+		//How fast to flap the wings
+		int wingSpeed = pilot.GetTriggerAxis(RIGHT);
 
 	
 
-		if (bubbles{
+		if (bubbles){
 			bubbleBoi.Set(Relay::kForward);
 		}
 		else{
 			bubbleBoi.Set(Relay::kOff);
 		}
 
-		double speed = accel(prev_speed, -pilot.GetY(LEFT) * 0.5, 50);
+		double speed = accel(prev_speed, speed_setpoint * 0.5, 50);
 		prev_speed = speed;
-		velocity = speed
 		drive.CurvatureDrive(-speed,turn * -0.5, std::abs(speed) < 0.05);
 
 		setSound(0);
@@ -189,7 +193,7 @@ public:
 		gearShift.Set(gear);
 
 		wingOpen.Set(wingState.toggle(buttonA()));
-		wingFlap.Set(deadzone(triggerright * 0.2);
+		wingFlap.Set(deadzone(wingSpeed * 0.2);
 
 		SmartDashboard::PutBoolean("Wings Extended: ", wingState);
 	}
