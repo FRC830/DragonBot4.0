@@ -20,10 +20,10 @@ using namespace Lib830;
 
 std::map<int, std::string> sounds {
 //	{1, "engine"},
-	{2, "roar"},
-	{3, "growl"},
-	{4, "sheep"},
-	{5, "fart"},
+	{4, "roar"},
+	{5, "growl"},
+	{2, "sheep"},
+	{3, "fart"},
 //	{6, "laser"},
 //	{7, "elevator"},
 //	{8, "cat"},
@@ -157,7 +157,7 @@ public:
 			bubbleBoi.Set(Relay::kOff);
 		}
 
-		double speed = accel(prev_speed, -pilot.GetY(LEFT) * 0.5, 50);
+		double speed = accel(prev_speed, -pilot.GetY(LEFT) * 0.5, 75);
 		prev_speed = speed;
 
 		drive.CurvatureDrive(-speed,pilot.GetX(RIGHT) * -0.5, std::abs(speed) < 0.05);
