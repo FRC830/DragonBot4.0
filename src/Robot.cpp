@@ -4,7 +4,7 @@
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
-
+/* comment your name if you can see this -peter, Adithya cool */
 #include <iostream>
 #include <string>
 #include <cmath>
@@ -31,7 +31,7 @@ std::map<int, std::string> sounds {
 
 enum GearState {low = false, high = true};
 
-class PIDSpeedControllerGroup : public SpeedControllerGroup {
+/*class PIDSpeedControllerGroup : public SpeedControllerGroup {
 private:
 	PIDController pid;
 	Encoder &encoder;
@@ -55,47 +55,54 @@ public:
 	void PIDWrite(double value) override {
 		SpeedControllerGroup::Set(value);
 	}
-};
+};*/
 
 class Robot : public frc::IterativeRobot {
 public:
+	// Motor PWM Pins
 	static const int PWM_R1 = 6, PWM_R2 = 7, PWM_R3 = 8,
-					 PWM_L1 = 3, PWM_L2 = 4, PWM_L3 = 5,
-					 PWM_WING_FLAP = 9;
+	PWM_L1 = 3, PWM_L2 = 4, PWM_L3 = 5,
+	PWM_WING_FLAP = 9;
 
-	static const int ENCODER_RIGHT_1 = 0;
-	static const int ENCODER_RIGHT_2 = 1;
-	static const int ENCODER_LEFT_1 = 2;
-	static const int ENCODER_LEFT_2 = 3;
+	// Motor Encoder Pins
+	static const int ENCODER_RIGHT_1 = 0, ENCODER_RIGHT_2 = 1,
+	ENCODER_LEFT_1 = 2, ENCODER_LEFT_2 = 3;
 
+	// soloniod pins
 	static const int PCM_GEAR_SHIFT = 1, PCM_WING_OPEN = 0;
 
+	// dead zones				
+	static const double CONTROLLER_DEADZONE = 0.1,
+	static const double WING_DEADZONE = 0.05;		
+
+	// Drivetrain
 	Talon L1{PWM_L1};
 	Talon L2{PWM_L2};
 	Talon L3{PWM_L3};
 	Talon R1{PWM_R1};
 	Talon R2{PWM_R2};
 	Talon R3{PWM_R3};
-
-	Victor wingFlap{PWM_WING_FLAP};
-
-	Solenoid wingOpen{PCM_WING_OPEN};
-	Solenoid gearShift{PCM_GEAR_SHIFT};
-
-	Toggle wingState{false};
-
-	const int BUBBLE_MACHINE_RELAY = 0; //placeholder value
-
-	Relay bubbleBoi {BUBBLE_MACHINE_RELAY, Relay::kForwardOnly};
-
-	Encoder left_encoder{ENCODER_LEFT_1, ENCODER_LEFT_2};
-	Encoder right_encoder{ENCODER_RIGHT_1, ENCODER_RIGHT_2};
-	// PIDSpeedControllerGroup Left{left_encoder, L1, L2, L3};
-	// PIDSpeedControllerGroup Right{right_encoder, R1, R2, R3};
 	SpeedControllerGroup Left{L1, L2, L3};
 	SpeedControllerGroup Right{R1, R2, R3};
-
 	DifferentialDrive drive {Left, Right};
+	Solenoid gearShift{PCM_GEAR_SHIFT};
+	double prev_speed = 0;
+	GearState gear = low;
+        
+		// Wings
+	Victor wingFlap{PWM_WING_FLAP};
+	Toggle wingState{false};
+	Solenoid wingOpen{PCM_WING_OPEN};
+	
+	// Bubbble Machine
+	const int BUBBLE_MACHINE_RELAY = 0; //placeholder value
+	Relay bubbleBoi {BUBBLE_MACHINE_RELAY, Relay::kForwardOnly};
+
+	// Encoder left_encoder{ENCODER_LEFT_1, ENCODER_LEFT_2};
+	// Encoder right_encoder{ENCODER_RIGHT_1, ENCODER_RIGHT_2};
+	// PIDSpeedControllerGroup Left{left_encoder, L1, L2, L3};
+	// PIDSpeedControllerGroup Right{right_encoder, R1, R2, R3};
+
 
 	XboxController pilot {0};
 
@@ -103,12 +110,10 @@ public:
 	std::map<std::string, DigitalOutput*> sound_outputs;
 	std::map<int /*button ID*/, SendableChooser<DigitalOutput*>> sound_choosers;
 
-
 	static const GenericHID::JoystickHand LEFT = GenericHID::kLeftHand;
 	static const GenericHID::JoystickHand RIGHT = GenericHID::kRightHand;
 
 	void RobotInit() override {
-
 		for (auto kv : sounds) {
 			sound_outputs[kv.second] = new DigitalOutput(kv.first);
 
@@ -116,8 +121,6 @@ public:
 				sound_choosers[button].AddObject(kv.second, sound_outputs[kv.second]);
 			}
 		}
-
-
 
 		SmartDashboard::PutData("Sound X", &sound_choosers[GamepadF310::BUTTON_X]);
 		SmartDashboard::PutData("Sound Y", &sound_choosers[GamepadF310::BUTTON_Y]);
@@ -134,42 +137,37 @@ public:
 		}
 	}
 
-	void AutonomousInit() override {
-		
-	}
+	void AutonomousInit() override {}
 
-	void AutonomousPeriodic() {
+	void AutonomousPeriodic() {}
 
-	}
+	void TeleopInit() {}
 
-	void TeleopInit() {
-		
-	}
 
-	double prev_speed = 0;
-	GearState gear = low; 
+
 	void TeleopPeriodic() {
-
+		// Bubble Machine
 		if (pilot.GetBButton()){
 			bubbleBoi.Set(Relay::kForward);
 		}
 		else{
 			bubbleBoi.Set(Relay::kOff);
 		}
-
+		// Drivetrain
 		double speed = accel(prev_speed, -pilot.GetY(LEFT) * 0.5, 75);
 		prev_speed = speed;
 
-		drive.CurvatureDrive(-speed,pilot.GetX(RIGHT) * -0.5, std::abs(speed) < 0.05);
+        drive.CurvatureDrive(-speed, pilot.GetX(RIGHT) * -0.5, std::abs(speed) < CONTROLLER_DEADZONE);
 
-		setSound(0);
+		// Sounds
+        setSound(0);
 
 		for (auto &kv : sound_choosers) {
 			if (pilot.GetRawButton(kv.first)) {
 				setSound(kv.second.GetSelected());
 			}
 		}
-
+		// Gearshifter
 		int POV = pilot.GetPOV();
 		if ((POV <= 45 && POV >= 0) || POV >= 315){
 			gear = high;
@@ -179,8 +177,9 @@ public:
 		}
 		gearShift.Set(gear);
 
+		// Wings
 		wingOpen.Set(wingState.toggle(pilot.GetAButton()));
-		wingFlap.Set(deadzone(pilot.GetTriggerAxis(RIGHT)) * 0.2);
+		wingFlap.Set(deadzone(pilot.GetTriggerAxis(RIGHT), WING_DEADZONE) * 0.2);
 
 		SmartDashboard::PutBoolean("Wings Extended: ", wingState);
 	}
@@ -189,8 +188,8 @@ public:
 
 private:
 	frc::LiveWindow& m_lw = *LiveWindow::GetInstance();
-	float deadzone(float a) {
-		if (fabs(a) < 0.05){
+	float deadzone(float a, float deadzoneValue) {
+		if (fabs(a) < deadzoneValue){
 			return 0;
 		}
 		return a;
