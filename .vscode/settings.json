@@ -46,5 +46,6 @@
         "cstdarg": "cpp",
         "iomanip": "cpp",
         "*.inc": "cpp"
-    }
+    },
+    "java.configuration.updateBuildConfiguration": "disabled"
 }

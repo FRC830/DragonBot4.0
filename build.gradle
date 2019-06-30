@@ -1,8 +1,8 @@
 plugins {
     id "cpp"
     id "visual-studio"
-    id "jaci.openrio.gradle.GradleRIO" version "2018.01.22"
-    id 'edu.wpi.first.GradleVsCode' version '0.3.0'
+    id "jaci.openrio.gradle.GradleRIO" version "2018.01.22" //newest="2019.4.1"
+    id 'edu.wpi.first.GradleVsCode' version '0.3.0' //newest="0.8.0"
 }
 
 def TEAM = 830
@@ -52,6 +52,6 @@ model {
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.4'
+wrapper {
+    gradleVersion = '5.5'
 }
