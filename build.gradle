@@ -1,57 +1,49 @@
 plugins {
     id "cpp"
-    id "visual-studio"
-    id "jaci.openrio.gradle.GradleRIO" version "2018.01.22" //newest="2019.4.1"
-    id 'edu.wpi.first.GradleVsCode' version '0.3.0' //newest="0.8.0"
+    id "edu.wpi.first.GradleRIO" version "2019.4.1" 
 }
-
-def TEAM = 830
-
-// Define my targets (RoboRIO) and artifacts (deployable files)
-// This is added by GradleRIO's backing project EmbeddedTools.
+// Last modified July 1
+// Modified from https://github.com/wpilibsuite/GradleRIO/blob/master/examples/cpp/build.gradle
 deploy {
     targets {
-        target("roborio", jaci.openrio.gradle.frc.RoboRIO) {
-            team = TEAM
+        roboRIO("roborio") {
+            // Team number is loaded from .wpilib/wpilib_preferences.json
+            team = frc.getTeamNumber()
         }
     }
     artifacts {
-        artifact('frcNative', jaci.openrio.gradle.frc.FRCNativeArtifact) {
+        frcNativeArtifact('frcCpp') {
             targets << "roborio"
             component = 'frcUserProgram'
         }
     }
 }
 
-// Defining my C++ project. In this case, it is called 'frcUserProgram',
-// and is of the language C++.
 model {
     components {
         
         frcUserProgram(NativeExecutableSpec) {
-            // Target the RoboRIO (arm-frc-linux-gnueabihf)
-            targetPlatform 'roborio'
+            targetPlatform wpi.platforms.roborio
+
             sources.cpp {
-                // This is where our source files are located (src/cpp for C++ files, src/include for headers)
                 source {
-                    srcDirs = ['src', 'src/Lib830']
+                    srcDir 'src'
+                    srcDir 'src/Lib830'
                     include '**/*.cpp'
                 }
-                exportedHeaders{
-                    srcDirs = ['src', 'src/Lib830']
-                    include '**/*.hpp', '**/*.h'
+                exportedHeaders {
+                    srcDir 'src'
+                    srcDir 'src/Lib830'
+                    include '**/*.h'
                 }
-
-                // Define my dependencies. In this case, WPILib (+ friends), CTRE Phoenix (Talon SRX) and NavX.
-                lib library: "wpilib"
-                lib library: "ctre"
-                lib library: "navx"
-                lib library: "openrio.powerup.matchData"
             }
+
+            // Define Dependencies
+            useLibrary(it, "wpilib")
+            wpi.deps.vendor.cpp(it)
         }
     }
 }
-
 wrapper {
     gradleVersion = '5.5'
 }

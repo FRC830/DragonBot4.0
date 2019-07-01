@@ -40,3 +40,6 @@ build.properties
 # Gradle
 .gradle/
 build/
+
+# Vscode
+.vscode/
