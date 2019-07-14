@@ -54,15 +54,12 @@ model {
             sources.cpp {
                 source {
                     srcDir 'src'
-                    srcDir 'src/Lib830'
                     include '**/*.cpp', '**/*.cc'
                 }
                 exportedHeaders {
+                    srcDir 'src'
                     srcDir 'src/Lib830'
                     include '**/*.h'
-                    if (includeSrcInIncludeRoot) {
-                        srcDir 'src'
-                    }
                 }
             }
 

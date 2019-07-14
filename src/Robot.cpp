@@ -10,12 +10,20 @@
 #include <cmath>
 #include <map>
 
-#include <IterativeRobot.h>
-#include <LiveWindow/LiveWindow.h>
-#include <SmartDashboard/SendableChooser.h>
-#include <SmartDashboard/SmartDashboard.h>
+#include <frc/drive/DifferentialDrive.h>
+#include <frc/TimedRobot.h>
+#include <frc/LiveWindow/LiveWindow.h>
+#include <frc/SmartDashboard/SendableChooser.h>
+#include <frc/SmartDashboard/SmartDashboard.h>
+#include <frc/SpeedControllerGroup.h>
+#include <frc/Victor.h>
+#include <frc/Talon.h>
+#include <frc/Solenoid.h>
+#include <frc/Relay.h>
+#include <frc/XBoxController.h>
 #include "Lib830.h"
 
+using namespace frc;
 using namespace Lib830;
 
 std::map<int, std::string> sounds {
@@ -57,7 +65,7 @@ public:
 	}
 };*/
 
-class Robot : public frc::IterativeRobot {
+class Robot : public frc::TimedRobot {
 public:
 	// Motor PWM Pins
 	static const int PWM_R1 = 6, PWM_R2 = 7, PWM_R3 = 8,
@@ -72,8 +80,8 @@ public:
 	static const int PCM_GEAR_SHIFT = 1, PCM_WING_OPEN = 0;
 
 	// dead zones				
-	static const double CONTROLLER_DEADZONE = 0.1,
-	static const double WING_DEADZONE = 0.05;		
+	static constexpr double CONTROLLER_DEADZONE = 0.1;
+	static constexpr double WING_DEADZONE = 0.05;		
 
 	// Drivetrain
 	Talon L1{PWM_L1};
@@ -118,7 +126,7 @@ public:
 			sound_outputs[kv.second] = new DigitalOutput(kv.first);
 
 			for (int button : {GamepadF310::BUTTON_X, GamepadF310::BUTTON_Y}) {
-				sound_choosers[button].AddObject(kv.second, sound_outputs[kv.second]);
+				sound_choosers[button].AddOption(kv.second, sound_outputs[kv.second]);
 			}
 		}
 
@@ -196,4 +204,6 @@ private:
 	}
 };
 
-START_ROBOT_CLASS(Robot)
+int main() { 
+	return frc::StartRobot<Robot>(); 
+}
