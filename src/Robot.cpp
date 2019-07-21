@@ -21,6 +21,8 @@
 #include <frc/Solenoid.h>
 #include <frc/Relay.h>
 #include <frc/XBoxController.h>
+#include <PIDController.h>
+#include <Encoder.h>
 #include "Lib830.h"
 
 using namespace frc;
@@ -32,14 +34,14 @@ std::map<int, std::string> sounds {
 	{5, "growl"},
 	{6, "sheep"},
 	{7, "fart"},
-//	{6, "laser"},
-//	{7, "elevator"},
-//	{8, "cat"},
+//	{8, "laser"},
+	{8, "elevator"},
+	{9, "cat"},
 };
 
 enum GearState {low = false, high = true};
 
-/*class PIDSpeedControllerGroup : public SpeedControllerGroup {
+class PIDSpeedControllerGroup : public SpeedControllerGroup {
 private:
 	PIDController pid;
 	Encoder &encoder;
@@ -63,7 +65,7 @@ public:
 	void PIDWrite(double value) override {
 		SpeedControllerGroup::Set(value);
 	}
-};*/
+};
 
 class Robot : public frc::TimedRobot {
 public:
