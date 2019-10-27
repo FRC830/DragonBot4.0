@@ -164,7 +164,7 @@ public:
 			bubbleBoi.Set(Relay::kOff);
 		}
 		// Drivetrain
-		double speed = accel(prev_speed, -pilot.GetY(LEFT), 75);
+		double speed = accel(prev_speed, -pilot.GetY(LEFT) * 0.75, 75);
 		prev_speed = speed;
 
         drive.CurvatureDrive(-speed, pilot.GetX(RIGHT) * -0.5, std::abs(speed) < CONTROLLER_DEADZONE);
