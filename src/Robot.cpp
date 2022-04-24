@@ -16,8 +16,8 @@
 #include <frc/SmartDashboard/SendableChooser.h>
 #include <frc/SmartDashboard/SmartDashboard.h>
 #include <frc/SpeedControllerGroup.h>
-#include <frc/Victor.h>
-#include <frc/Talon.h>
+#include <frc/motorcontrol/Victor.h>
+#include <frc/motorcontrol/Talon.h>
 #include <frc/Solenoid.h>
 #include <frc/Relay.h>
 #include <frc/XBoxController.h>
@@ -26,7 +26,6 @@
 #include "Lib830.h"
 
 using namespace frc;
-using namespace Lib830;
 
 std::map<int, std::string> sounds {
 //	{1, "engine"},
@@ -76,7 +75,8 @@ public:
 
 	// Motor Encoder Pins
 	static const int ENCODER_RIGHT_1 = 0, ENCODER_RIGHT_2 = 1,
-	ENCODER_LEFT_1 = 2, ENCODER_LEFT_2 = 3;
+	ENCODER_LEFT_
+	1 = 2, ENCODER_LEFT_2 = 3;
 
 	// soloniod pins
 	static const int PCM_GEAR_SHIFT = 1, PCM_WING_OPEN = 0;
@@ -185,7 +185,8 @@ public:
 		if (POV <= 225 && POV >= 135){
 			gear = low;			
 		}
-		gearShift.Set(gear);
+		//shifter is broken so shifting should not happen
+		//gearShift.Set(gear);
 
 		// Wings
 		wingOpen.Set(wingState.toggle(pilot.GetAButton()));
